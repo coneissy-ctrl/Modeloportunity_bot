@@ -29,6 +29,30 @@ app.add_middleware(
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
 
+# SIGNUP LINKS CONFIGURATION
+MODEL_SIGNUPS = {
+    "whitetrafs": {
+        "link": "https://go.whitetrafsa.com?userId=edc515a82c3cd22d1035458ac225d903eacce1cb7248e0388c3c35a5cb637069",
+        "name": "WhiteTrafs Premium",
+        "description": "Exclusive modeling opportunities & premium networking"
+    },
+    "stripcash": {
+        "link": "https://stripcash.com/sign-up/Coneissy",
+        "name": "StripCash Premium",
+        "description": "Premium platform for additional income streams"
+    }
+}
+
+AFFILIATE_SIGNUP = {
+    "link": "https://go.mavrtracktor.com/signup/model?userId=edc515a82c3cd22d1035458ac225d903eacce1cb7248e0388c3c35a5cb637069",
+    "name": "MavrTracktor Affiliate Program",
+    "description": "Earn commissions by promoting modeling opportunities"
+}
+
+# Keywords that trigger signup options
+SIGNUP_KEYWORDS = ["sign up", "signup", "join", "register", "start", "create account", "begin", "enroll", "how do i join", "how to start"]
+AFFILIATE_KEYWORDS = ["affiliate", "earn money", "make money", "commission", "refer", "referral", "partner", "promote"]
+
 # Request/Response models
 class MessageRequest(BaseModel):
     message: str
@@ -37,21 +61,36 @@ class MessageRequest(BaseModel):
 class MessageResponse(BaseModel):
     response: str
     conversation_history: list
+    show_model_signup: bool = False
+    show_affiliate_signup: bool = False
+    model_links: dict = None
+    affiliate_link: dict = None
 
 @app.get("/")
 def read_root():
     """Root endpoint"""
-    return {"message": "Welcome to Modeloportunity Bot API"}
+    return {
+        "message": "Welcome to Modeloportunity Bot API",
+        "version": "1.0.0"
+    }
 
 @app.get("/health")
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
+@app.get("/signup-links")
+def get_signup_links():
+    """Get all signup links"""
+    return {
+        "model_signups": MODEL_SIGNUPS,
+        "affiliate_signup": AFFILIATE_SIGNUP
+    }
+
 @app.post("/chat", response_model=MessageResponse)
 def chat(request: MessageRequest):
     """
-    Chat endpoint that processes user messages with ChatGPT
+    Chat endpoint - Shows signup links when relevant
     """
     try:
         # Build conversation history
@@ -71,9 +110,18 @@ def chat(request: MessageRequest):
         # Update conversation history
         messages.append({"role": "assistant", "content": assistant_message})
         
+        # Check if user wants to sign up as model
+        show_model = any(keyword in request.message.lower() for keyword in SIGNUP_KEYWORDS)
+        # Check if user wants to join affiliate program
+        show_affiliate = any(keyword in request.message.lower() for keyword in AFFILIATE_KEYWORDS)
+        
         return MessageResponse(
             response=assistant_message,
-            conversation_history=messages
+            conversation_history=messages,
+            show_model_signup=show_model,
+            show_affiliate_signup=show_affiliate,
+            model_links=MODEL_SIGNUPS if show_model else None,
+            affiliate_link=AFFILIATE_SIGNUP if show_affiliate else None
         )
     
     except Exception as e:
@@ -88,7 +136,6 @@ def get_modeling_advice(request: MessageRequest):
     Specialized endpoint for modeling business advice
     """
     try:
-        # System prompt for modeling advice
         system_prompt = """You are an expert modeling business consultant. 
         Help aspiring and professional models with career advice, portfolio tips, 
         industry insights, and opportunities. Be encouraging and provide practical guidance."""
@@ -114,6 +161,38 @@ def get_modeling_advice(request: MessageRequest):
         raise HTTPException(
             status_code=500,
             detail=f"Error generating advice: {str(e)}"
+        )
+
+@app.post("/opportunities")
+def find_opportunities(request: MessageRequest):
+    """
+    Find modeling opportunities based on user profile
+    """
+    try:
+        system_prompt = """You are a modeling opportunity finder. 
+        Based on the user's information, suggest specific opportunities and platforms."""
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Help me find modeling opportunities: {request.message}"}
+        ]
+        
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1500
+        )
+        
+        return {
+            "opportunities": response.choices[0].message.content,
+            "model_used": MODEL
+        }
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error finding opportunities: {str(e)}"
         )
 
 if __name__ == "__main__":

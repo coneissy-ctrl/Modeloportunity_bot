@@ -4,12 +4,17 @@ import axios from 'axios';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  show_model_signup?: boolean;
+  show_affiliate_signup?: boolean;
+  model_links?: any;
+  affiliate_link?: any;
 }
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [signupData, setSignupData] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -20,14 +25,23 @@ export default function Home() {
   
   useEffect(() => {
     scrollToBottom();
+    fetchSignupLinks();
   }, [messages]);
+  
+  const fetchSignupLinks = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/signup-links`);
+      setSignupData(response.data);
+    } catch (error) {
+      console.log('Signup data not available');
+    }
+  };
   
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
     
-    // Add user message
     const userMessage: Message = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
@@ -41,7 +55,11 @@ export default function Home() {
       
       const assistantMessage: Message = {
         role: 'assistant',
-        content: response.data.response
+        content: response.data.response,
+        show_model_signup: response.data.show_model_signup,
+        show_affiliate_signup: response.data.show_affiliate_signup,
+        model_links: response.data.model_links,
+        affiliate_link: response.data.affiliate_link
       };
       
       setMessages(prev => [...prev, assistantMessage]);
@@ -61,7 +79,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-purple-600 to-blue-600 flex flex-col">
       {/* Header */}
       <div className="bg-black bg-opacity-50 text-white p-4 shadow-lg">
-        <h1 className="text-3xl font-bold">🎭 Modeloportunity Bot</h1>
+        <h1 className="text-3xl font-bold">🧑‍🤝‍🧑 Modeloportunity Bot</h1>
         <p className="text-sm text-gray-300">Your AI Modeling Business Assistant</p>
       </div>
       
@@ -72,23 +90,80 @@ export default function Home() {
             <div>
               <h2 className="text-2xl font-bold mb-4">Welcome to Modeloportunity Bot!</h2>
               <p className="text-lg">Ask me anything about the modeling business</p>
+              <p className="text-sm text-gray-300 mt-2">💡 Tip: Ask about joining as a model or becoming an affiliate!</p>
             </div>
           </div>
         ) : (
           messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+            <div key={idx}>
               <div
-                className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
-                  msg.role === 'user'
-                    ? 'bg-blue-500 text-white rounded-br-none'
-                    : 'bg-gray-700 text-white rounded-bl-none'
-                }`}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.content}
+                <div
+                  className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
+                    msg.role === 'user'
+                      ? 'bg-blue-500 text-white rounded-br-none'
+                      : 'bg-gray-700 text-white rounded-bl-none'
+                  }`}
+                >
+                  {msg.content}
+                </div>
               </div>
+              
+              {/* MODEL SIGNUP OPTIONS */}
+              {msg.show_model_signup && msg.model_links && (
+                <div className="flex justify-start mt-3">
+                  <div className="bg-gradient-to-r from-purple-700 to-blue-700 text-white p-4 rounded-lg border-2 border-green-400 max-w-md">
+                    <p className="font-bold mb-3 text-green-300">🎭 Join as a Model:</p>
+                    <div className="space-y-2">
+                      {msg.model_links.whitetrafs && (
+                        <a
+                          href={msg.model_links.whitetrafs.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block bg-gradient-to-r from-green-400 to-green-300 hover:from-green-300 hover:to-green-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                        >
+                          💎 {msg.model_links.whitetrafs.name}
+                          <br />
+                          <span className="text-xs font-normal">{msg.model_links.whitetrafs.description}</span>
+                        </a>
+                      )}
+                      {msg.model_links.stripcash && (
+                        <a
+                          href={msg.model_links.stripcash.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block bg-gradient-to-r from-green-400 to-green-300 hover:from-green-300 hover:to-green-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                        >
+                          💰 {msg.model_links.stripcash.name}
+                          <br />
+                          <span className="text-xs font-normal">{msg.model_links.stripcash.description}</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* AFFILIATE SIGNUP OPTIONS */}
+              {msg.show_affiliate_signup && msg.affiliate_link && (
+                <div className="flex justify-start mt-3">
+                  <div className="bg-gradient-to-r from-yellow-700 to-orange-700 text-white p-4 rounded-lg border-2 border-yellow-400 max-w-md">
+                    <p className="font-bold mb-3 text-yellow-300">💼 Become an Affiliate:</p>
+                    <a
+                      href={msg.affiliate_link.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block bg-gradient-to-r from-yellow-400 to-yellow-300 hover:from-yellow-300 hover:to-yellow-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                    >
+                      📊 {msg.affiliate_link.name}
+                      <br />
+                      <span className="text-xs font-normal">{msg.affiliate_link.description}</span>
+                    </a>
+                    <p className="text-xs text-yellow-200 mt-2">Earn commissions by promoting modeling opportunities!</p>
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}
@@ -113,7 +188,7 @@ export default function Home() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question..."
+            placeholder="Ask a question or say 'join' to sign up..."
             disabled={loading}
             className="flex-1 px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           />
