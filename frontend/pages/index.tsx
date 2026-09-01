@@ -67,7 +67,7 @@ export default function Home() {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.'
+        content: '❌ Sorry, I encountered an error. Please try again.'
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -76,68 +76,106 @@ export default function Home() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-600 to-blue-600 flex flex-col">
-      {/* Header */}
-      <div className="bg-black bg-opacity-50 text-white p-4 shadow-lg">
-        <h1 className="text-3xl font-bold">🧑‍🤝‍🧑 Modeloportunity Bot</h1>
-        <p className="text-sm text-gray-300">Your AI Modeling Business Assistant</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black flex flex-col">
+      {/* PREMIUM HEADER */}
+      <div className="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white p-6 shadow-2xl border-b-4 border-yellow-400">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="animate-pulse">
+              <h1 className="text-5xl font-black tracking-wider">🌹 MODELOPORTUNITY ELITE 🌹</h1>
+              <p className="text-lg text-yellow-200 font-bold mt-2">✨ Premium Modeling Platform • Exclusive Opportunities • Elite Network</p>
+            </div>
+            <div className="text-6xl animate-bounce">👑</div>
+          </div>
+        </div>
       </div>
       
-      {/* Chat Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* QUICK START BANNER */}
+      {messages.length === 0 && (
+        <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black p-4 shadow-lg">
+          <div className="max-w-7xl mx-auto text-center">
+            <p className="font-black text-lg">💡 Ask about joining as a model or becoming an affiliate! 🚀</p>
+          </div>
+        </div>
+      )}
+      
+      {/* CHAT CONTAINER */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 max-w-7xl mx-auto w-full">
         {messages.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-center text-white">
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Welcome to Modeloportunity Bot!</h2>
-              <p className="text-lg">Ask me anything about the modeling business</p>
-              <p className="text-sm text-gray-300 mt-2">💡 Tip: Ask about joining as a model or becoming an affiliate!</p>
+          <div className="h-full flex items-center justify-center text-center">
+            <div className="text-white">
+              <h2 className="text-5xl font-black mb-6 bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
+                💎 Welcome to Your Modeling Future 💎
+              </h2>
+              <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text mb-8">
+                Elite AI Modeling Assistant
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+                <div className="bg-gradient-to-br from-red-600 to-pink-600 p-6 rounded-2xl border-2 border-red-400 shadow-2xl hover:shadow-red-500/50 transform hover:scale-105 transition">
+                  <p className="text-3xl mb-2">👗</p>
+                  <p className="font-bold text-yellow-200">Premium Modeling</p>
+                  <p className="text-sm text-gray-100">Top agencies & exclusive bookings</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-600 to-indigo-600 p-6 rounded-2xl border-2 border-purple-400 shadow-2xl hover:shadow-purple-500/50 transform hover:scale-105 transition">
+                  <p className="text-3xl mb-2">🎯</p>
+                  <p className="font-bold text-yellow-200">Career Growth</p>
+                  <p className="text-sm text-gray-100">Expert guidance & networking</p>
+                </div>
+                <div className="bg-gradient-to-br from-yellow-500 to-orange-600 p-6 rounded-2xl border-2 border-yellow-400 shadow-2xl hover:shadow-yellow-500/50 transform hover:scale-105 transition">
+                  <p className="text-3xl mb-2">💸</p>
+                  <p className="font-bold text-white">Earn Premium Income</p>
+                  <p className="text-sm text-gray-900">Multiple income streams</p>
+                </div>
+              </div>
+              <p className="text-gray-300 text-lg">✨ Start chatting to unlock your potential! ✨</p>
             </div>
           </div>
         ) : (
           messages.map((msg, idx) => (
-            <div key={idx}>
-              <div
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+            <div key={idx} className="space-y-3">
+              {/* MESSAGE */}
+              <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
+                  className={`max-w-2xl px-6 py-4 rounded-3xl font-medium text-lg ${
                     msg.role === 'user'
-                      ? 'bg-blue-500 text-white rounded-br-none'
-                      : 'bg-gray-700 text-white rounded-bl-none'
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-br-none shadow-2xl'
+                      : 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-100 rounded-bl-none shadow-xl border-2 border-purple-500'
                   }`}
                 >
                   {msg.content}
                 </div>
               </div>
               
-              {/* MODEL SIGNUP OPTIONS */}
+              {/* MODEL SIGNUP - PREMIUM BUTTONS */}
               {msg.show_model_signup && msg.model_links && (
-                <div className="flex justify-start mt-3">
-                  <div className="bg-gradient-to-r from-purple-700 to-blue-700 text-white p-4 rounded-lg border-2 border-green-400 max-w-md">
-                    <p className="font-bold mb-3 text-green-300">🎭 Join as a Model:</p>
-                    <div className="space-y-2">
+                <div className="flex justify-start mt-4">
+                  <div className="bg-gradient-to-br from-gray-900 to-black p-6 rounded-3xl border-3 border-red-500 max-w-2xl shadow-2xl shadow-red-500/50">
+                    <p className="font-black text-xl text-transparent bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text mb-4">
+                      🎪 JOIN AS A MODEL - SELECT YOUR PLATFORM:
+                    </p>
+                    <div className="space-y-3">
                       {msg.model_links.whitetrafs && (
                         <a
                           href={msg.model_links.whitetrafs.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block bg-gradient-to-r from-green-400 to-green-300 hover:from-green-300 hover:to-green-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                          className="block bg-gradient-to-r from-red-600 via-pink-600 to-red-600 hover:from-red-500 hover:via-pink-500 hover:to-red-500 text-white px-6 py-4 rounded-2xl font-black text-center transition transform hover:scale-110 shadow-2xl border-2 border-red-300 hover:border-yellow-300 text-lg"
                         >
-                          💎 {msg.model_links.whitetrafs.name}
+                          👑 {msg.model_links.whitetrafs.name}
                           <br />
-                          <span className="text-xs font-normal">{msg.model_links.whitetrafs.description}</span>
+                          <span className="text-sm font-bold text-yellow-200">{msg.model_links.whitetrafs.description}</span>
                         </a>
                       )}
-                      {msg.model_links.stripcash && (
+                      {msg.model_links.mavrtracktor && (
                         <a
-                          href={msg.model_links.stripcash.link}
+                          href={msg.model_links.mavrtracktor.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block bg-gradient-to-r from-green-400 to-green-300 hover:from-green-300 hover:to-green-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                          className="block bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:via-indigo-500 hover:to-purple-500 text-white px-6 py-4 rounded-2xl font-black text-center transition transform hover:scale-110 shadow-2xl border-2 border-purple-300 hover:border-yellow-300 text-lg"
                         >
-                          💰 {msg.model_links.stripcash.name}
+                          ⭐ {msg.model_links.mavrtracktor.name}
                           <br />
-                          <span className="text-xs font-normal">{msg.model_links.stripcash.description}</span>
+                          <span className="text-sm font-bold text-yellow-200">{msg.model_links.mavrtracktor.description}</span>
                         </a>
                       )}
                     </div>
@@ -145,35 +183,39 @@ export default function Home() {
                 </div>
               )}
               
-              {/* AFFILIATE SIGNUP OPTIONS */}
+              {/* AFFILIATE SIGNUP - PREMIUM BUTTON */}
               {msg.show_affiliate_signup && msg.affiliate_link && (
-                <div className="flex justify-start mt-3">
-                  <div className="bg-gradient-to-r from-yellow-700 to-orange-700 text-white p-4 rounded-lg border-2 border-yellow-400 max-w-md">
-                    <p className="font-bold mb-3 text-yellow-300">💼 Become an Affiliate:</p>
+                <div className="flex justify-start mt-4">
+                  <div className="bg-gradient-to-br from-gray-900 to-black p-6 rounded-3xl border-3 border-yellow-500 max-w-2xl shadow-2xl shadow-yellow-500/50">
+                    <p className="font-black text-xl text-transparent bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text mb-4">
+                      💼 BECOME AN ELITE AFFILIATE & EARN:
+                    </p>
                     <a
                       href={msg.affiliate_link.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block bg-gradient-to-r from-yellow-400 to-yellow-300 hover:from-yellow-300 hover:to-yellow-200 text-black px-4 py-3 rounded-lg font-bold text-center transition transform hover:scale-105 shadow-lg"
+                      className="block bg-gradient-to-r from-yellow-500 via-orange-500 to-red-600 hover:from-yellow-400 hover:via-orange-400 hover:to-red-500 text-white px-6 py-4 rounded-2xl font-black text-center transition transform hover:scale-110 shadow-2xl border-2 border-yellow-300 hover:border-white text-lg"
                     >
-                      📊 {msg.affiliate_link.name}
+                      💰 {msg.affiliate_link.name}
                       <br />
-                      <span className="text-xs font-normal">{msg.affiliate_link.description}</span>
+                      <span className="text-sm font-bold text-white">{msg.affiliate_link.description}</span>
                     </a>
-                    <p className="text-xs text-yellow-200 mt-2">Earn commissions by promoting modeling opportunities!</p>
+                    <p className="text-yellow-300 font-black mt-3 text-center text-lg">🤑 HIGH COMMISSIONS WAITING 🤑</p>
                   </div>
                 </div>
               )}
             </div>
           ))
         )}
+        
+        {/* TYPING INDICATOR */}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-gray-700 text-white px-4 py-3 rounded-lg">
-              <div className="flex space-x-2">
-                <div className="h-2 w-2 bg-white rounded-full animate-bounce"></div>
-                <div className="h-2 w-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                <div className="h-2 w-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+            <div className="bg-gradient-to-r from-purple-700 to-indigo-700 text-white px-6 py-4 rounded-3xl shadow-2xl">
+              <div className="flex space-x-3">
+                <div className="h-4 w-4 bg-yellow-400 rounded-full animate-bounce"></div>
+                <div className="h-4 w-4 bg-yellow-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <div className="h-4 w-4 bg-yellow-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
               </div>
             </div>
           </div>
@@ -181,25 +223,34 @@ export default function Home() {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Input Form */}
-      <div className="bg-black bg-opacity-50 p-4 border-t border-gray-700">
-        <form onSubmit={handleSendMessage} className="flex gap-2">
+      {/* PREMIUM INPUT FORM */}
+      <div className="bg-gradient-to-r from-black via-purple-900 to-black p-6 border-t-4 border-red-500 shadow-2xl">
+        <form onSubmit={handleSendMessage} className="max-w-7xl mx-auto flex gap-4">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question or say 'join' to sign up..."
+            placeholder="Ask about modeling opportunities, joining, or earning as an affiliate... ✨"
             disabled={loading}
-            className="flex-1 px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="flex-1 px-6 py-4 rounded-2xl bg-gradient-to-r from-gray-900 to-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500 disabled:opacity-50 border-2 border-purple-600 font-medium text-lg"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="px-8 py-4 bg-gradient-to-r from-red-600 via-pink-600 to-red-600 hover:from-red-500 hover:via-pink-500 hover:to-red-500 text-white rounded-2xl font-black disabled:opacity-50 disabled:cursor-not-allowed transition transform hover:scale-110 shadow-2xl border-2 border-yellow-400 text-lg"
           >
-            Send
+            🚀 SEND
           </button>
         </form>
+        
+        {/* FOOTER */}
+        <div className="mt-6 max-w-7xl mx-auto">
+          <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-black p-4 rounded-2xl border-2 border-yellow-500 text-center">
+            <p className="text-yellow-300 font-black text-lg mb-2">⚡ MODELOPORTUNITY ELITE ⚡</p>
+            <p className="text-gray-200">Your AI-powered gateway to premium modeling opportunities & affiliate commissions</p>
+            <p className="text-gray-400 text-sm mt-2">💬 Say "join" to become a model • 💼 Say "affiliate" to earn commissions</p>
+          </div>
+        </div>
       </div>
     </div>
   );
