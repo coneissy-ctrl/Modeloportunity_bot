@@ -13,4 +13,5 @@ class Base(DeclarativeBase):
 def init_db() -> None:
     from app.users.models import User
     from app.referrals.models import Referral
+    from app.affiliates.models import AffiliateOffer
     Base.metadata.create_all(bind=engine)
